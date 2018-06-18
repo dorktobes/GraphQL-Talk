@@ -6,23 +6,21 @@ class Message extends Component {
     super(props);
     this.state = {
       user: '...loading',
-    }
+    };
   }
   componentDidMount() {
-    let user = '...loading';
     fetch(`/users/${this.props.user}`)
-    .then(response => response.json())
-    .then((data) => {
-      this.setState({ user: data.username });
-    })
-    
+      .then(response => response.json())
+      .then((data) => {
+        this.setState({ user: data.username });
+      });
   }
   render() {
     return (
-    <div className="chat">
-      <div className="user">{this.state.user}</div>
-      <div className="text">{this.props.text}</div>
-    </div>
+      <div className="chat">
+        <div className="user">{this.state.user}</div>
+        <div className="text">{this.props.text}</div>
+      </div>
     );
   }
 }

@@ -1,9 +1,10 @@
 const mongoose = require('mongoose');
+
 mongoose.connect(process.env.DB_URI);
 const db = mongoose.connection;
 db.on('error', (err) => {
   console.error(err);
-})
+});
 db.on('connect', console.log.bind(console, 'Connected to DB'));
 
 const roomSchema = mongoose.Schema({
@@ -14,7 +15,7 @@ const Room = mongoose.model('Room', roomSchema);
 
 const userSchema = mongoose.Schema({
   username: String,
-})
+});
 
 const User = mongoose.model('User', userSchema);
 
