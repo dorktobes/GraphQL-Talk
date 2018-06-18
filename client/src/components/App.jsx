@@ -21,10 +21,10 @@ class App extends Component {
     this.refetchMessages = this.refetchMessages.bind(this);
   }
   async componentDidMount() {
+    const username = this.state.currentUser || (prompt('What is your name?') || 'anonymous');
     try {
       const rooms = await fetch('/rooms').then(res => res.json());
       const messages = await fetch('/messages').then(res => res.json());
-      const username = this.state.currentUser || (prompt('What is your name?') || 'anonymous');
       let currentUser = await fetch(`/users/name/${username}`).then(res => res.json());
       if (!currentUser.username) {
         currentUser = await fetch('/users', {

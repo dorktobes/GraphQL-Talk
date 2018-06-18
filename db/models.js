@@ -4,7 +4,7 @@ const Users = {
   getAll: () => User.find({}),
   getByID: id => User.findById(id),
   getByUsername: username => User.findOne({ username }),
-  create: username => Promise((resolve) => {
+  create: username => new Promise((resolve) => {
     User.find({ username })
       .then((result) => {
         if (result.length) {
