@@ -18,14 +18,14 @@ class App extends Component {
       messages: [],
     };
     this.handleRoomChange = this.handleRoomChange.bind(this);
+    this.refetchMessages = this.refetchMessages.bind(this);
   }
   async componentDidMount() {
     try{
     const rooms = await fetch('/rooms').then(res => res.json());
     const messages = await fetch('/messages').then(res => res.json());
-    const username = window.location.search.split('=')[1];
-    let currentUser = await fetch(`/users/${username}`).then(res => res.json());
-    console.log(currentUser);
+    const username = this.state.currentUser  || (prompt('What is your name?') || 'anonymous');
+    let currentUser = await fetch(`/users/name/${username}`).then(res => res.json());
     if (!currentUser.username) {
       currentUser = await fetch('/users', {
         headers: {
@@ -55,10 +55,14 @@ class App extends Component {
       loading: !this.state.loading,
     })
   }
-  handleRoomChange(e){
+  handleRoomChange(e) {
     this.setState({
-      selectedRoom: e.target.value,
+      selectedRoom: this.state.rooms[e.target.value],
     })
+  }
+  async refetchMessages() {
+    const messages = await fetch('/messages').then(res => res.json());
+    this.setState({ messages });
   }
   render() {
     return (
@@ -70,12 +74,16 @@ class App extends Component {
           <Dropdown
             id="roomSelect"
             handleChange={this.handleRoomChange}
-            options={this.state.rooms.map(({name}) => ({ text: name, value: name, }))}
+            options={this.state.rooms.map(({name}, i) => ({ text: name, value: i, }))}
           />
         </div>
-        <MessageInput />
+        <MessageInput
+          currentUser={this.state.currentUser}
+          currentRoom={this.state.selectedRoom}
+          refetchMessages={this.refetchMessages}
+        />
         <div id="chats">
-          <MessageList messages={this.state.messages.filter(({ room }) => room === this.state.selectedRoom.__id)} />
+          <MessageList messages={this.state.messages.filter(({ room }) => room === this.state.selectedRoom._id)} />
         </div>
       </div>
     );

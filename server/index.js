@@ -14,7 +14,7 @@ app.use((req, res, next) => {
 
 app.use(express.static(path.join(__dirname, '../client/dist/')));
 
-app.get('/users/:username', (req, res) => {
+app.get('/users/name/:username', (req, res) => {
   models.Users.getByUsername(req.params.username)
   .then((data) => {
     console.log(data);
@@ -23,6 +23,17 @@ app.get('/users/:username', (req, res) => {
   .catch((err) => {
     res.status(503);
     res.send(err);
+  })
+});
+
+app.get('/users/:userid', (req, res) => {
+  models.Users.getByID(req.params.userid)
+  .then((data) => {
+    res.send(data);
+  })
+  .catch((err) => {
+    res.status(503);
+    res.send();
   })
 });
 
@@ -60,9 +71,9 @@ app.get('/messages', (req, res) => {
   })
 });
 app.post('/messages', (req, res) => {
-  models.Messages.create(req.body.message)
+  models.Messages.create(req.body)
   res.status(201);
-
+  res.send();
 })
 
 const PORT = process.env.PORT || 3000;

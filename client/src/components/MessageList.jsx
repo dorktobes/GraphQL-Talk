@@ -7,8 +7,8 @@ class MessageList extends Component {
   render() {
     return (
       <div>
-        {this.props.messages.map(({ text, username }) => (
-          <Message text={text} username={username} />  
+        {this.props.messages.map(({ text, user, _id }) => (
+          <Message key={_id} text={text} user={user} />  
         ))}
       </div>
     );

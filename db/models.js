@@ -58,6 +58,7 @@ const Messages = {
     return Message.find({});
   },
   create: (message) => {
+    console.log('message', message);
     const newMessage = new Message(message)
     return newMessage.save();
   },
