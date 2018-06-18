@@ -1,6 +1,7 @@
 require('dotenv').config();
 const express = require('express');
 const path = require('path');
+const expressGraphQL = require('express-graphql');
 
 const app = express();
 const models = require('../db/models');
@@ -14,6 +15,14 @@ app.use((req, res, next) => {
 });
 
 app.use(express.static(path.join(__dirname, '../client/dist/')));
+
+app.use('/graphql', expressGraphQL({
+  schema,
+  graphiql: true,
+  context: {
+    models,
+  },
+}));
 
 app.get('/users/name/:username', (req, res) => {
   models.Users.getByUsername(req.params.username)
