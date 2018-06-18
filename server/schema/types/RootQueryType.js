@@ -12,19 +12,19 @@ const {
 const RootQueryType = new GraphQLObjectType({
   name: 'RootQueryType',
   fields: {
-    Messages: {
+    messages: {
       type: GraphQLList(MessageType),
       resolve(parentValue, args, context) {
         return context.models.Messages.getAll();
       },
     },
-    Users: {
+    users: {
       type: GraphQLList(UserType),
       resolve(parentValue, args, context) {
         return context.models.Users.getAll();
       },
     },
-    Rooms: {
+    rooms: {
       type: GraphQLList(RoomType),
       resolve(parentValue, args, context) {
         return context.models.Rooms.getAll();

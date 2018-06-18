@@ -19,7 +19,7 @@ class MessageInput extends Component {
     const message = {
       text: this.state.message,
       user: this.props.currentUser._id,
-      room: this.props.currentRoom._id,
+      room: this.props.currentRoom.id,
     };
     fetch('/messages', {
       headers: {
@@ -60,7 +60,7 @@ MessageInput.propTypes = {
   }).isRequired,
   currentRoom: PropTypes.shape({
     name: PropTypes.string,
-    _id: PropTypes.string,
+    id: PropTypes.string,
   }).isRequired,
   refetchMessages: PropTypes.func.isRequired,
 };

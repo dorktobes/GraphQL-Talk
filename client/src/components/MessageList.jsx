@@ -5,8 +5,8 @@ import Message from './Message';
 
 const MessageList = props => (
   <div>
-    {props.messages.map(({ text, user, _id }) => (
-      <Message key={_id} text={text} user={user} />
+    {props.messages.map(({ text, user: { username }, id }) => (
+      <Message key={id} text={text} user={username} />
     ))}
   </div>
 );
@@ -14,7 +14,10 @@ const MessageList = props => (
 MessageList.propTypes = {
   messages: PropTypes.arrayOf(PropTypes.shape({
     text: PropTypes.string,
-    username: PropTypes.string,
+    id: PropTypes.string,
+    user: PropTypes.shape({
+      username: PropTypes.string,
+    }),
   })).isRequired,
 };
 

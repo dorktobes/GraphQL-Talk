@@ -1,9 +1,13 @@
 import React, { Component } from 'react';
+import Proptypes from 'prop-types';
+import { graphql } from 'react-apollo';
 
 import Spinner from './Spinner';
 import Dropdown from './Dropdown';
 import MessageInput from './MessageInput';
 import MessageList from './MessageList';
+
+import query from '../queries/fetchMessagesAndRooms';
 
 require('babel-polyfill');
 
@@ -11,11 +15,8 @@ class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      loading: true,
-      rooms: [],
       selectedRoom: null,
       currentUser: null,
-      messages: [],
     };
     this.handleRoomChange = this.handleRoomChange.bind(this);
     this.refetchMessages = this.refetchMessages.bind(this);
@@ -23,8 +24,6 @@ class App extends Component {
   async componentDidMount() {
     const username = this.state.currentUser || (prompt('What is your name?') || 'anonymous');
     try {
-      const rooms = await fetch('/rooms').then(res => res.json());
-      const messages = await fetch('/messages').then(res => res.json());
       let currentUser = await fetch(`/users/name/${username}`).then(res => res.json());
       if (!currentUser.username) {
         currentUser = await fetch('/users', {
@@ -38,58 +37,63 @@ class App extends Component {
       }
 
       this.setState({
-        rooms,
-        messages,
         currentUser,
-        selectedRoom: rooms[0],
-        loading: false,
       });
     } catch (err) {
       console.error(err);
     }
   }
-  toggleLoading() {
-    this.setState({
-      loading: !this.state.loading,
-    });
-  }
   handleRoomChange(e) {
     this.setState({
-      selectedRoom: this.state.rooms[e.target.value],
+      selectedRoom: this.props.data.rooms.filter(({ id }) => id === e.target.value)[0],
     });
   }
   async refetchMessages() {
-    const messages = await fetch('/messages').then(res => res.json());
-    this.setState({ messages });
+    this.props.data.refetch();
   }
   render() {
-    return (
-      <div>
-        <h1>chatterbox</h1>
-        <Spinner loading={this.state.loading} />
-        <div id="rooms">
-          Room:
-          <Dropdown
-            id="roomSelect"
-            handleChange={this.handleRoomChange}
-            options={this.state.rooms.map(({ name }, i) => ({ text: name, value: i }))}
+    const { data: { loading, rooms, messages } } = this.props;
+    if (!loading) {
+      return (
+        <div>
+          <h1>chatterbox</h1>
+          <div id="rooms">
+            Room:
+            <Dropdown
+              id="roomSelect"
+              handleChange={this.handleRoomChange}
+              options={rooms.map(({ name, id }) => ({ text: name, value: id }))}
+            />
+          </div>
+          <MessageInput
+            currentUser={this.state.currentUser}
+            currentRoom={(this.state.selectedRoom || rooms[0])}
+            refetchMessages={this.refetchMessages}
           />
+          <div id="chats">
+            <MessageList
+              messages={
+                messages.filter(({ room: { id } }) => (
+                  id === (this.state.selectedRoom ? this.state.selectedRoom.id : rooms[0].id)
+                ))
+              }
+            />
+          </div>
         </div>
-        <MessageInput
-          currentUser={this.state.currentUser}
-          currentRoom={this.state.selectedRoom}
-          refetchMessages={this.refetchMessages}
-        />
-        <div id="chats">
-          <MessageList
-            messages={
-              this.state.messages.filter(({ room }) => room === this.state.selectedRoom._id)
-            }
-          />
-        </div>
-      </div>
-    );
+      );
+    }
+    return <Spinner loading={this.props.data.loading} />;
   }
 }
 
-export default App;
+App.propTypes = {
+  data: Proptypes.shape({
+    loading: Proptypes.bool,
+    refetch: Proptypes.func.isRequired,
+    rooms: Proptypes.arrayOf(Proptypes.shape({
+      name: Proptypes.string,
+    })),
+  }).isRequired,
+};
+
+export default graphql(query)(App);
