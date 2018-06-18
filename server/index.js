@@ -6,6 +6,7 @@ const expressGraphQL = require('express-graphql');
 const app = express();
 const models = require('../db/models');
 const bodyparser = require('body-parser');
+const schema = require('./schema');
 
 app.use(bodyparser.json());
 
