@@ -4,6 +4,13 @@
     "describe": 1,
     "test": 1,
     "document": 1,
-    "expect": 1
+    "expect": 1,
+    "fetch": 1,
+    "prompt": 1
+  },
+  "rules": {
+    "no-alert": "off",
+    "no-console": "off",
+    "no-underscore-dangle": "off"
   }
 }

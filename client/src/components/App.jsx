@@ -1,11 +1,11 @@
-require("babel-polyfill");
 import React, { Component } from 'react';
-import PropTypes from 'prop-types';
 
 import Spinner from './Spinner';
 import Dropdown from './Dropdown';
 import MessageInput from './MessageInput';
 import MessageList from './MessageList';
+
+require('babel-polyfill');
 
 class App extends Component {
   constructor(props) {
@@ -21,44 +21,42 @@ class App extends Component {
     this.refetchMessages = this.refetchMessages.bind(this);
   }
   async componentDidMount() {
-    try{
-    const rooms = await fetch('/rooms').then(res => res.json());
-    const messages = await fetch('/messages').then(res => res.json());
-    const username = this.state.currentUser  || (prompt('What is your name?') || 'anonymous');
-    let currentUser = await fetch(`/users/name/${username}`).then(res => res.json());
-    if (!currentUser.username) {
-      currentUser = await fetch('/users', {
-        headers: {
-          'content-type': 'application/json',
-        },
-        body: JSON.stringify({
-          username: username
-        }),
-        method: 'POST',
-      })
-      .then(res => res.json());
-    }
+    try {
+      const rooms = await fetch('/rooms').then(res => res.json());
+      const messages = await fetch('/messages').then(res => res.json());
+      const username = this.state.currentUser || (prompt('What is your name?') || 'anonymous');
+      let currentUser = await fetch(`/users/name/${username}`).then(res => res.json());
+      if (!currentUser.username) {
+        currentUser = await fetch('/users', {
+          headers: {
+            'content-type': 'application/json',
+          },
+          body: JSON.stringify({ username }),
+          method: 'POST',
+        })
+          .then(res => res.json());
+      }
 
-    this.setState({
-      rooms,
-      messages,
-      currentUser,
-      selectedRoom: rooms[0],
-      loading: false,
-    });
-    } catch(err) {
+      this.setState({
+        rooms,
+        messages,
+        currentUser,
+        selectedRoom: rooms[0],
+        loading: false,
+      });
+    } catch (err) {
       console.error(err);
     }
   }
   toggleLoading() {
     this.setState({
       loading: !this.state.loading,
-    })
+    });
   }
   handleRoomChange(e) {
     this.setState({
       selectedRoom: this.state.rooms[e.target.value],
-    })
+    });
   }
   async refetchMessages() {
     const messages = await fetch('/messages').then(res => res.json());
@@ -74,7 +72,7 @@ class App extends Component {
           <Dropdown
             id="roomSelect"
             handleChange={this.handleRoomChange}
-            options={this.state.rooms.map(({name}, i) => ({ text: name, value: i, }))}
+            options={this.state.rooms.map(({ name }, i) => ({ text: name, value: i }))}
           />
         </div>
         <MessageInput
@@ -83,7 +81,11 @@ class App extends Component {
           refetchMessages={this.refetchMessages}
         />
         <div id="chats">
-          <MessageList messages={this.state.messages.filter(({ room }) => room === this.state.selectedRoom._id)} />
+          <MessageList
+            messages={
+              this.state.messages.filter(({ room }) => room === this.state.selectedRoom._id)
+            }
+          />
         </div>
       </div>
     );

@@ -28,13 +28,12 @@ class MessageInput extends Component {
       body: JSON.stringify(message),
       method: 'POST',
     })
-    .then((response) => {
-      if(response.ok) {
-        this.props.refetchMessages();
-      }
-    })
+      .then((response) => {
+        if (response.ok) {
+          this.props.refetchMessages();
+        }
+      });
   }
-  
   render() {
     return (
       <form
@@ -42,13 +41,13 @@ class MessageInput extends Component {
         onSubmit={this.handleSubmit}
       >
         <input
-        type="text"
-        name="message"
-        id="message"
-        value={this.state.message}
-        onChange={this.onInputChange}
-      />
-        <input type="submit" name="submit" className="submit"/>
+          type="text"
+          name="message"
+          id="message"
+          value={this.state.message}
+          onChange={this.onInputChange}
+        />
+        <input type="submit" name="submit" className="submit" />
       </form>
     );
   }
@@ -63,15 +62,7 @@ MessageInput.propTypes = {
     name: PropTypes.string,
     _id: PropTypes.string,
   }).isRequired,
-};
-
-MessageInput.defaultProps = {
-  currentUser: {
-    username: 'anon',
-  },
-  currentUser: {
-    name: 'lobby',
-  }
+  refetchMessages: PropTypes.func.isRequired,
 };
 
 export default MessageInput;
