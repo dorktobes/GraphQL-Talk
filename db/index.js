@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-
+console.log('node environment', process.env);
 mongoose.connect(process.env.DB_URI);
 const db = mongoose.connection;
 db.on('error', (err) => {

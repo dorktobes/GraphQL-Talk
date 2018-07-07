@@ -30,7 +30,10 @@ class MessageInput extends Component {
     })
       .then((response) => {
         if (response.ok) {
-          this.props.refetchMessages();
+          this.setState(
+            { message: '' },
+            this.props.refetchMessages,
+          );
         }
       });
   }
